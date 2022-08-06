@@ -1,0 +1,1 @@
+master  ansible_host=odroid ansible_port=22

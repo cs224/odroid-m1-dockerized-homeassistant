@@ -1,0 +1,12 @@
+[Unit]
+Description=Trigger Power Off for Standby Power Plugs service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/{{ ansible_user }}/opt/homeassistant-automations
+User={{ ansible_user }}
+Group={{ ansible_user }}
+
+ExecStart=/bin/bash -c 'source /home/{{ ansible_user }}/install/anaconda/bin/activate {{ conda_env_name }} && python trigger-power-off-for-standby.py && conda deactivate'
+StandardOutput=file:/tmp/trigger-power-off-for-standby-out.txt
+StandardError=inherit

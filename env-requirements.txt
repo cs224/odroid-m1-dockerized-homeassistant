@@ -1,0 +1,15 @@
+watermark
+
+tqdm
+
+requests
+
+jinja2
+click
+
+tzlocal==2.1
+flatten_json
+SQLAlchemy
+alembic
+psycopg2
+paho-mqtt

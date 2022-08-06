@@ -1,0 +1,14 @@
+name: py38od # odroid
+channels:
+  - numba
+  - defaults
+dependencies:
+  - python=3.8
+  - pip
+  - numpy
+  - numba
+  - scipy
+  - pandas
+  - matplotlib
+  - seaborn
+  - jupyter

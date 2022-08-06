@@ -1,0 +1,18 @@
+---
+# tasks file for finance-market-signals-systemd-services
+
+- name: set-up systemd unit for the home assistant automation service
+  ansible.builtin.template: src=trigger-power-off-for-standby.service dest=/etc/systemd/system/trigger-power-off-for-standby.service
+  become: true
+
+- name: set-up systemd unit for the financial market signals gather timer
+  ansible.builtin.template: src=trigger-power-off-for-standby.timer dest=/etc/systemd/system/trigger-power-off-for-standby.timer
+  become: true
+
+- name: enable, restart and daemon-reload for the financial market signals gather timer
+  ansible.builtin.systemd:
+    name: trigger-power-off-for-standby.timer
+    enabled: yes
+    state: restarted
+    daemon_reload: yes
+  become: true

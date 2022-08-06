@@ -1,0 +1,19 @@
+---
+# tasks file for finance_market_signals
+- name: install libarchive13
+  apt:
+    name: "{{ item }}"
+    force: yes
+    state: present
+  with_items:
+    - libarchive13
+  become: true
+
+- name: conda init
+  command: '{{ conda_env_conda_bin }} init'
+
+- name: conda config --set auto_activate_base true
+  command: '{{ conda_env_conda_bin }} config --set auto_activate_base true'
+
+- name: install mamba
+  command: '{{ conda_env_conda_bin }} install mamba -y -n base -c conda-forge'

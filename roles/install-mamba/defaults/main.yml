@@ -1,0 +1,4 @@
+---
+# defaults file for finance_market_signals
+
+conda_env_exe: conda

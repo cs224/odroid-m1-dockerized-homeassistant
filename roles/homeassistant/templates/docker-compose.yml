@@ -1,0 +1,56 @@
+
+services:
+  portainer:
+    container_name: portainer
+    image: portainer/portainer-ce
+    ports:
+      - "127.0.0.1:9000:9000/tcp"
+    environment:
+      - TZ={{ timezone }}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /opt/{{ role_name }}/data/portainer:/data
+  postgres:
+    container_name: postgresql
+    image: 'timescale/timescaledb:latest-pg14'
+    volumes:
+      - /opt/{{ role_name }}/data/postgresql/data:/var/lib/postgresql/data
+    #environment:
+    #  - POSTGRES_USER=postgres
+    #  - POSTGRES_PASSWORD=postgres
+    env_file:
+      - ./dc.env
+    ports:
+      - "127.0.0.1:5432:5432/tcp"
+  homeassistant:
+    container_name: homeassistant
+    image: "ghcr.io/home-assistant/home-assistant:stable"
+    volumes:
+      - /opt/{{ role_name }}/data/homeassistant/config:/config
+      - /etc/localtime:/etc/localtime:ro
+    privileged: true
+    #ports:
+    #  - "127.0.0.1:8123:8123/tcp"
+    network_mode: host
+  mosquitto:
+    image: eclipse-mosquitto
+    container_name: mosquitto
+    volumes:
+      - /opt/{{ role_name }}/data/mosquitto:/mosquitto
+    ports:
+      - 1883:1883
+      - 9001:9001
+  duplicati:
+    image: lscr.io/linuxserver/duplicati
+    container_name: duplicati
+    environment:
+      - PUID=0 # 1000
+      - PGID=0 # 1000
+      - TZ={{ timezone }}
+      - CLI_ARGS= #optional
+    volumes:
+      - /opt/{{ role_name }}/data/duplicati/config:/config
+      - /opt/{{ role_name }}/data:/source
+      - /opt/{{ role_name }}/duplicati-backup:/target
+    ports:
+      - "127.0.0.1:8200:8200/tcp"

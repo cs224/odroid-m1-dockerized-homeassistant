@@ -1,0 +1,7 @@
+---
+# ansible-galaxy install -r requirements.yml
+roles:
+  - src: andrewrothstein.miniconda # https://github.com/andrewrothstein/ansible-miniconda
+  - src: andrewrothstein.conda-env # https://github.com/andrewrothstein/ansible-conda-env
+  #- src: geerlingguy.firewall
+  #- src: geerlingguy.mailhog

@@ -1,0 +1,15 @@
+
+- name: Setup homeassistant on odroid
+  hosts: master
+  gather_facts: yes
+  become: false
+  become_method: sudo
+  vars_files:
+    - config.yml
+
+  roles:
+    - role: homeassistant
+      become: yes
+  # environment:
+  #   http_proxy: "{{ lookup('env','http_proxy') }}"
+  #   https_proxy: "{{ lookup('env','https_proxy') }}"

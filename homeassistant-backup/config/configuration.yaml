@@ -1,0 +1,67 @@
+
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+# Database
+recorder:
+  db_url: !secret psql_string
+  db_retry_wait: 15 # Wait 15 seconds before retrying
+  exclude:
+    domains:
+      - automation
+      - updater
+    entity_globs:
+      - sensor.weather_*
+    entities:
+      - sun.sun # Don't record sun data
+      - sensor.last_boot # Comes from 'systemmonitor' sensor platform
+      - sensor.date
+    event_types:
+      - call_service # Don't record service calls
+
+panel_iframe:
+  portainer:
+    title: "Portainer"
+    url: "http://localhost:9000/#/containers"
+    icon: mdi:docker
+    require_admin: true
+  duplicati:
+    title: "Duplicati"
+    url: "http://localhost:8200"
+    icon: mdi:backup-restore
+    require_admin: true
+
+python_script:
+
+# https://www.home-assistant.io/integrations/systemmonitor/
+sensor:
+  - platform: systemmonitor
+    resources:
+      - type: load_1m
+      - type: load_5m
+      - type: load_15m
+      - type: network_in
+        arg: wlxe0e1a933d0d5
+      - type: network_out
+        arg: wlxe0e1a933d0d5
+      - type: throughput_network_in
+        arg: wlxe0e1a933d0d5
+      - type: throughput_network_out
+        arg: wlxe0e1a933d0d5
+      - type: processor_use
+      - type: processor_temperature            
+      - type: disk_use_percent
+        arg: /config
+      - type: disk_use
+      - type: disk_free
+      - type: memory_use_percent
+      - type: memory_use
+      - type: memory_free              

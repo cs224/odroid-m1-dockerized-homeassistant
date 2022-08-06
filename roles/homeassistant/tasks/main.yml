@@ -1,0 +1,42 @@
+---
+# tasks file for homeassistant
+
+- name: Creates directories to deploy files to
+  ansible.builtin.file:
+    path: '{{ item.dir }}'
+    state: directory
+    mode: '{{ item.mode }}'
+    recurse: yes
+  with_items:
+    - { dir: '/opt/{{ role_name }}', mode: '0700' }
+    - { dir: '/opt/{{ role_name }}/data', mode: '0700' }
+    - { dir: '/opt/{{ role_name }}/data/portainer', mode: '0700' }
+    - { dir: '/opt/{{ role_name }}/data/postgresql', mode: '0700' }
+    - { dir: '/opt/{{ role_name }}/data/postgresql/data', mode: '0700' }
+    - { dir: '/opt/{{ role_name }}/data/homeassistant', mode: '0700' }
+    - { dir: '/opt/{{ role_name }}/data/homeassistant/config', mode: '0700' }
+    - { dir: '/opt/{{ role_name }}/data/mosquitto', mode: '0700' }
+    - { dir: '/opt/{{ role_name }}/data/duplicati', mode: '0700' }
+    - { dir: '/opt/{{ role_name }}/data/duplicati/config', mode: '0700' }
+    - { dir: '/opt/{{ role_name }}/duplicati-backup', mode: '0700' }
+
+- name: Create files
+  ansible.builtin.template:
+    src: '{{ role_path }}/templates/{{ item.src }}'
+    dest: '/opt/{{ role_name }}/{{ item.src }}'
+    mode: '{{ item.mode }}'
+  with_items:
+    - { src: 'Makefile', mode: '0640' }
+    - { src: 'dc.env', mode: '0640' }
+    - { src: 'docker-compose.yml', mode: '0640' }
+    - { src: 'update.sh', mode: '0640' }
+
+- name: set-up docker-compose systemd unit for the homeassistant infrastructure components
+  ansible.builtin.template: src=homeassistant.service dest=/etc/systemd/system/homeassistant.service
+
+- name: enable, restart and daemon-reload for the homeassistant infrastructure
+  ansible.builtin.systemd:
+    name: homeassistant
+    enabled: yes
+    state: restarted
+    daemon_reload: yes

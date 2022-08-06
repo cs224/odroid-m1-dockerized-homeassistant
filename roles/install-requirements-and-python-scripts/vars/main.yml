@@ -1,0 +1,7 @@
+---
+# vars file for finance-market-signals-2
+conda_env_conda_dir: '/home/{{ ansible_user }}/install/anaconda'
+conda_env_bin_dir: '{{ conda_env_conda_dir }}/bin'
+conda_env_env_ymls: '{{ conda_env_conda_dir }}/env-ymls'
+
+conda_env_conda_bin: '{{ conda_env_bin_dir }}/{{ conda_env_exe }}'

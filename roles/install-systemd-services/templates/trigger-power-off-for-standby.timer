@@ -1,0 +1,11 @@
+[Unit]
+Description=Trigger Power Off for Standby Power Plugs timer
+
+[Timer]
+Unit=trigger-power-off-for-standby.service
+# Every 10 minutes # https://unix.stackexchange.com/questions/126786/systemd-timer-every-15-minutes
+OnCalendar=*:0/10
+Persistent=true
+
+[Install]
+WantedBy=timers.target

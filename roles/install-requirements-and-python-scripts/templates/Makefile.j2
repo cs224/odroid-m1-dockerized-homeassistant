@@ -1,0 +1,31 @@
+
+SHELL=/bin/bash
+CONDAROOT={{ conda_env_conda_dir }}
+
+run:
+	source $(CONDAROOT)/bin/activate {{ conda_env_name }} && python trigger-power-off-for-standby.py && conda deactivate
+
+start:
+	sudo systemctl start trigger-power-off-for-standby.service
+
+status:
+	sudo systemctl status trigger-power-off-for-standby.timer
+
+journal:
+	sudo journalctl -S today -u trigger-power-off-for-standby.service
+
+logs:
+	cat /tmp/trigger-power-off-for-standby-out.txt
+
+
+# odroid> sudo su
+# root> systemctl stop trigger-power-off-for-standby.timer
+# root> systemctl disable trigger-power-off-for-standby.timer
+# root> systemctl stop trigger-power-off-for-standby.service
+# root> systemctl disalbe trigger-power-off-for-standby.service
+# root> systemctl daemon-reload
+# root> systemctl list-units --all | grep trigger-power-off-for-standby # -> should be empty
+# root> systemctl list-timers --all | grep trigger-power-off-for-standby # -> should be empty
+# root> rm /etc/systemd/system/trigger-power-off-for-standby.service /etc/systemd/system/trigger-power-off-for-standby.timer
+# root> cd /home/{{ ansible_user }}/opt/
+# root> rm -rf homeassistant-automations

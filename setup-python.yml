@@ -1,0 +1,48 @@
+
+# ansible all -m ping
+# ansible-playbook setup-python.yml --ask-become-pass
+# ansible-playbook setup-python.yml -e "ansible_become_pass=yourPassword"
+# ansible-playbook setup-python.yml --tags install-mamba --ask-become-pass
+# ansible-playbook setup-python.yml --tags install-py38od
+# ansible-playbook setup-python.yml --tags install-requirements-and-python-scripts
+# ansible-playbook setup-python.yml --tags install-systemd-services --ask-become-pass
+# ansible-playbook setup-python.yml --tags install-requirements-and-python-scripts --tags install-systemd-services --ask-become-pass
+
+- name: Setup python applications on odroid
+  hosts: master
+  gather_facts: yes
+  become: false
+  become_method: sudo
+  vars_files:
+    - config.yml
+
+  roles:
+    - role: andrewrothstein.miniconda
+      miniconda_parent_dir: '/home/{{ ansible_user }}/install'
+      miniconda_link_subdir: anaconda
+      miniconda_pkg_update: true
+      miniconda_escalate: false
+      miniconda_ver: '4.10.3'
+      miniconda_python_ver: '39'
+      miniconda_checksums:
+        '4.10.3':
+          '39':
+            # https://repo.anaconda.com/miniconda/Miniconda3-py39_4.10.3-Linux-aarch64.sh
+            Linux-aarch64: sha256:4879820a10718743f945d88ef142c3a4b30dfc8e448d1ca08e019586374b773f
+    - role: install-mamba
+      tags: 'install-mamba'
+    - role: andrewrothstein.conda-env
+      conda_env_name: py38od
+      conda_env_environment: env-environment.yml
+      conda_env_exe: mamba
+      conda_env_escalate: false
+      tags: 'install-py38od'
+    - role: install-requirements-and-python-scripts
+      conda_env_name: py38od
+      tags: 'install-requirements-and-python-scripts'
+    - role: install-systemd-services
+      conda_env_name: py38od
+      tags: 'install-systemd-services'
+  # environment:
+  #   http_proxy: "{{ lookup('env','http_proxy') }}"
+  #   https_proxy: "{{ lookup('env','https_proxy') }}"

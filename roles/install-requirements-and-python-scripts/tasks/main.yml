@@ -1,0 +1,45 @@
+---
+# tasks file for finance-market-signals-2
+- name: Upgrade pip
+  ansible.builtin.shell: 'pip install --upgrade pip'
+
+- name: Register CONDA_BASE
+  ansible.builtin.shell: '{{ conda_env_conda_bin }}  info --base'
+  register: conda_base
+
+- debug: var=conda_base.stdout_lines
+
+- name: copy files
+  ansible.builtin.copy:
+    src: '{{ playbook_dir }}/{{ item.src }}'
+    dest: '{{ conda_env_env_ymls }}/{{ conda_env_name }}-{{ item.src }}' # {{ conda_env_env_ymls }}/{{ conda_env_name }}-{{ conda_env_environment | basename }}
+    mode: '{{ item.mode }}'
+  with_items:
+    - { src: 'env-requirements.txt', mode: '0644' }
+
+- name: Install requirements.txt
+  ansible.builtin.shell: 'source {{ conda_env_conda_dir }}/bin/activate {{ conda_env_name }} && pip install -r {{ conda_env_env_ymls }}/{{ conda_env_name }}-env-requirements.txt'
+  args:
+    executable: /bin/bash
+
+- name: Create directory
+  ansible.builtin.file:
+    path: '/home/{{ ansible_user }}/opt/homeassistant-automations'
+    state: directory
+    mode: '0755'
+    recurse: yes
+
+- name: Copy script files
+  ansible.builtin.copy:
+    src: '{{ playbook_dir }}/{{ item.src }}'
+    dest: '/home/{{ ansible_user }}/opt/homeassistant-automations'
+    mode: '{{ item.mode }}'
+  with_items:
+    - { src: 'python/ha.py', mode: '0644' }
+    - { src: 'python/trigger-power-off-for-standby.py', mode: '0644' }
+
+- name: injecting/templatizing ...
+  template:
+    src: 'Makefile.j2'
+    dest: '/home/{{ ansible_user }}/opt/homeassistant-automations/Makefile'
+    mode: 0644
